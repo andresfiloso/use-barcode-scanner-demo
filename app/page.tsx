@@ -65,7 +65,7 @@ export default function Page() {
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="gap-1.5"><a className="inline-flex items-center gap-1.5" href="https://www.npmjs.com/package/use-barcode-scanner" target="_blank" rel="noreferrer"><Package data-icon="inline-start" /> <span>npm</span></a></Button>
-            <Button asChild variant="outline" size="sm" className="gap-1.5"><a className="inline-flex items-center gap-1.5" href="https://github.com" target="_blank" rel="noreferrer"><Github data-icon="inline-start" /> <span>GitHub</span></a></Button>
+            <Button asChild variant="outline" size="sm" className="gap-1.5"><a className="inline-flex items-center gap-1.5" href="https://github.com" target="_blank" rel="noreferrer"><Github aria-hidden="true" data-icon="inline-start" /> <span>GitHub</span></a></Button>
           </div>
         </div>
       </header>
