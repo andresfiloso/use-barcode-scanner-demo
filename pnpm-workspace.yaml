@@ -3,3 +3,7 @@ pmOnFail: ignore
 minimumReleaseAgeExclude:
   - '@next/*'
   - next
+  - use-barcode-scanner@0.1.4
+
+allowBuilds:
+  sharp: true

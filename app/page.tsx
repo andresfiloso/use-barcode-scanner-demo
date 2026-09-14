@@ -1,6 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
+import { useBarcodeCamera, useBarcodeScanner } from 'use-barcode-scanner'
 import {
   Barcode,
   Camera,
@@ -13,7 +14,6 @@ import {
   LifeBuoy,
   ListRestart,
   Package,
-  Play,
   ScanLine,
   Smartphone,
   Trash2,
@@ -26,8 +26,6 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const demoValues = ['8901030897617', 'https://acme.dev/scan/42', 'SKU-RED-XL-009']
-
 type Scan = { value: string; format: string; source: string; time: string }
 
 function formatTime() {
@@ -36,42 +34,19 @@ function formatTime() {
 
 export default function Page() {
   const [mode, setMode] = useState('handheld')
-  const [scanning, setScanning] = useState(false)
   const [lastScan, setLastScan] = useState<Scan | null>(null)
   const [history, setHistory] = useState<Scan[]>([])
   const [copied, setCopied] = useState(false)
-  const scannerBuffer = useRef('')
-  const lastKeyAt = useRef(0)
-
-  const addScan = useCallback((value: string, source = mode === 'handheld' ? 'Handheld' : 'Camera') => {
+  const addScan = useCallback((value: string, source: string) => {
     if (!value.trim()) return
     const scan: Scan = { value: value.trim(), format: value.startsWith('http') ? 'QR_CODE' : 'CODE_128', source, time: formatTime() }
     setLastScan(scan)
     setHistory((items) => [scan, ...items].slice(0, 6))
-    setScanning(false)
-  }, [mode])
-
-  useEffect(() => {
-    if (mode !== 'handheld') return
-    const handleKeyDown = (event: KeyboardEvent) => {
-      const now = Date.now()
-      if (now - lastKeyAt.current > 100) scannerBuffer.current = ''
-      lastKeyAt.current = now
-      if (event.key === 'Enter') {
-        addScan(scannerBuffer.current, 'Handheld')
-        scannerBuffer.current = ''
-      } else if (event.key.length === 1) {
-        scannerBuffer.current += event.key
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [mode, addScan])
-
-  const simulateScan = () => {
-    setScanning(true)
-    window.setTimeout(() => addScan(demoValues[history.length % demoValues.length]), 700)
-  }
+  }, [])
+  useBarcodeScanner({ enabled: mode === 'handheld', onScan: (value) => addScan(value, 'Handheld') })
+  const camera = useBarcodeCamera({ enabled: mode === 'mobile', onScan: (value) => addScan(value, 'Camera') })
+  const scanning = camera.status === 'starting' || camera.status === 'running'
+  const cameraStatus = camera.status === 'permission-denied' ? 'camera permission denied' : camera.status === 'no-camera' ? 'no camera found' : camera.status === 'error' ? 'camera error' : camera.status
 
   const copyValue = async () => {
     if (!lastScan) return
@@ -112,7 +87,7 @@ export default function Page() {
             <Card>
               <CardHeader><div className="flex items-start justify-between gap-4"><div><CardTitle className="flex items-center gap-2"><Keyboard /> Keyboard-wedge input</CardTitle><CardDescription className="mt-1.5">Connect a USB or Bluetooth scanner. It behaves like a keyboard and ends with Enter.</CardDescription></div><Badge variant="outline" className="shrink-0">listening</Badge></div></CardHeader>
               <CardContent className="space-y-5">
-                <div className="rounded-xl border border-dashed bg-muted/30 p-8 text-center"><Barcode className="mx-auto mb-3 text-muted-foreground" /><p className="font-medium">Scan a barcode now</p><p className="mt-1 text-sm text-muted-foreground">Focus this page, then pull the trigger on your scanner.</p><Button className="mt-5" variant="outline" onClick={simulateScan}><Play data-icon="inline-start" /> Simulate scan</Button></div>
+                <div className="rounded-xl border border-dashed bg-muted/30 p-8 text-center"><Barcode className="mx-auto mb-3 text-muted-foreground" /><p className="font-medium">Scan a barcode now</p><p className="mt-1 text-sm text-muted-foreground">Connect your USB or Bluetooth scanner, then pull the trigger.</p><Badge className="mt-5" variant="secondary">Listening for scanner input</Badge></div>
                 <div className="grid gap-3 sm:grid-cols-3"><Stat label="Input mode" value="Keyboard" /><Stat label="Terminator" value="Enter" /><Stat label="Debounce" value="100 ms" /></div>
               </CardContent>
             </Card>
@@ -122,8 +97,8 @@ export default function Page() {
             <Card>
               <CardHeader><div className="flex items-start justify-between gap-4"><div><CardTitle className="flex items-center gap-2"><Camera /> Camera input</CardTitle><CardDescription className="mt-1.5">Use your phone camera to scan QR codes and common 1D barcodes.</CardDescription></div><Badge variant={scanning ? 'default' : 'outline'}>{scanning ? 'scanning' : 'idle'}</Badge></div></CardHeader>
               <CardContent className="space-y-5">
-                <div className="relative flex min-h-56 items-center justify-center overflow-hidden rounded-xl border bg-muted/30"><div className="absolute inset-x-14 top-1/2 border-t border-primary" /><div className="absolute inset-10 rounded-lg border-2 border-primary/50" />{scanning ? <div className="z-10 flex flex-col items-center gap-3 text-sm text-muted-foreground"><div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />Looking for a barcode…</div> : <div className="z-10 flex flex-col items-center gap-3 text-sm text-muted-foreground"><Camera />Camera preview will appear here</div>}</div>
-                <div className="flex flex-wrap gap-2"><Button onClick={simulateScan} disabled={scanning}><Camera data-icon="inline-start" /> {scanning ? 'Scanning…' : 'Start camera scan'}</Button><Button variant="outline" onClick={() => setScanning(false)}>Stop</Button></div>
+                <div ref={camera.containerRef} className="relative min-h-56 overflow-hidden rounded-xl border bg-muted/30"><div className="pointer-events-none absolute inset-x-14 top-1/2 z-10 border-t border-primary" /><div className="pointer-events-none absolute inset-10 z-10 rounded-lg border-2 border-primary/50" />{!scanning && <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 text-sm text-muted-foreground"><Camera />Select this tab to request camera access.</div>}</div>
+                <div className="flex flex-wrap items-center gap-2"><Badge variant={camera.status === 'permission-denied' || camera.status === 'error' ? 'destructive' : 'outline'}>{cameraStatus}</Badge><p className="text-xs text-muted-foreground">Your browser will ask for camera permission.</p></div>
               </CardContent>
             </Card>
           </TabsContent>
