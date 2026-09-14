@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'use-barcode-scanner playground',
+  description: 'Test handheld and mobile barcode scanning with use-barcode-scanner.',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="dark antialiased">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
