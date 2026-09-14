@@ -64,8 +64,8 @@ export default function Page() {
             <div><p className="font-semibold tracking-tight">use-barcode-scanner</p><p className="text-xs text-muted-foreground">interactive test bench</p></div>
           </div>
           <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm"><a href="https://www.npmjs.com/package/use-barcode-scanner" target="_blank" rel="noreferrer"><Package data-icon="inline-start" /> npm</a></Button>
-            <Button asChild variant="outline" size="sm"><a href="https://github.com" target="_blank" rel="noreferrer"><GitBranch data-icon="inline-start" /> GitHub</a></Button>
+            <Button asChild variant="ghost" size="sm" className="gap-1.5"><a className="inline-flex items-center gap-1.5" href="https://www.npmjs.com/package/use-barcode-scanner" target="_blank" rel="noreferrer"><Package data-icon="inline-start" /> <span>npm</span></a></Button>
+            <Button asChild variant="outline" size="sm" className="gap-1.5"><a className="inline-flex items-center gap-1.5" href="https://github.com" target="_blank" rel="noreferrer"><GitBranch data-icon="inline-start" /> <span>GitHub</span></a></Button>
           </div>
         </div>
       </header>
