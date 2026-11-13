@@ -24,6 +24,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { KeystrokeDebugger } from '@/components/keystroke-debugger'
 
 type Scan = { value: string; format: string; source: string; time: string }
 
@@ -107,6 +108,8 @@ export default function Page() {
           <Card><CardHeader><div className="flex items-center justify-between"><div><CardTitle>Latest result</CardTitle><CardDescription>The value your hook callback receives.</CardDescription></div>{lastScan && <Button variant="ghost" size="sm" onClick={copyValue}>{copied ? <Check data-icon="inline-start" /> : <Copy data-icon="inline-start" />}{copied ? 'Copied' : 'Copy'}</Button>}</div></CardHeader><CardContent>{lastScan ? <div className="rounded-lg border bg-muted/30 p-4"><p className="break-all font-mono text-sm">{lastScan.value}</p><div className="mt-3 flex flex-wrap gap-2"><Badge variant="secondary">{lastScan.format}</Badge><Badge variant="outline">{lastScan.source}</Badge><span className="text-xs text-muted-foreground">{lastScan.time}</span></div></div> : <div className="flex min-h-28 items-center justify-center rounded-lg border border-dashed text-sm text-muted-foreground">Your next scan will show up here.</div>}</CardContent></Card>
           <Card><CardHeader><div className="flex items-center justify-between"><div><CardTitle>Scan history</CardTitle><CardDescription>Last six successful reads.</CardDescription></div><Button variant="ghost" size="icon" aria-label="Clear history" onClick={() => { setHistory([]); setLastScan(null) }}><Trash2 /></Button></div></CardHeader><CardContent>{history.length ? <div className="flex flex-col gap-3">{history.map((scan, index) => <div key={`${scan.time}-${index}`} className="flex items-center gap-3 text-sm"><div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted"><Barcode /></div><div className="min-w-0 flex-1"><p className="truncate font-mono">{scan.value}</p><p className="text-xs text-muted-foreground">{scan.format} · {scan.time}</p></div></div>)}</div> : <p className="py-5 text-center text-sm text-muted-foreground">No scans yet.</p>}</CardContent></Card>
         </div>
+
+        {mode === 'handheld' && <KeystrokeDebugger />}
 
         <Separator className="my-10" />
         <div className="grid gap-5 md:grid-cols-3"><InfoCard icon={<ListRestart />} title="Simple callback flow" text="Get a value, format, and timestamp from every successful scan." /><InfoCard icon={<CircleHelp />} title="Multiple formats" text="Try QR_CODE, CODE_128, EAN_13, and more in one hook." /><InfoCard icon={<LifeBuoy />} title="Made for testing" text="Switch input modes to verify behavior before shipping." /></div>

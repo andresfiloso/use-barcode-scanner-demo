@@ -48,8 +48,8 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
       use-barcode-scanner:
-        specifier: ^0.1.4
-        version: 0.1.4(@ericblade/quagga2@1.12.1(@types/node@24.10.4))(react@19.2.4)
+        specifier: ^0.1.6
+        version: 0.1.6(@ericblade/quagga2@1.12.1(@types/node@24.10.4))(react@19.2.4)
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.3.3
@@ -2008,8 +2008,8 @@ packages:
     peerDependencies:
       browserslist: '>= 4.21.0'
 
-  use-barcode-scanner@0.1.4:
-    resolution: {integrity: sha512-zcGqaRvEM/QhGIaLnL4WOOqXYhXZ8lYgM8kkEg0pty38loIYEro+Tew0dPtflaH0rKXkRcstkIT2db53BkF1ig==}
+  use-barcode-scanner@0.1.6:
+    resolution: {integrity: sha512-IiLIe4w2Mno77kcJ3PXF3TPVSjGPBLwOspD/jE5KzTjMVZVVjArB0QV7CEaHDUOHvUpi9n/rDfVdVVg4ESBpMA==}
     peerDependencies:
       '@ericblade/quagga2': '>=1.8.0'
       react: '>=18'
@@ -3872,7 +3872,7 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
-  use-barcode-scanner@0.1.4(@ericblade/quagga2@1.12.1(@types/node@24.10.4))(react@19.2.4):
+  use-barcode-scanner@0.1.6(@ericblade/quagga2@1.12.1(@types/node@24.10.4))(react@19.2.4):
     dependencies:
       react: 19.2.4
     optionalDependencies:
